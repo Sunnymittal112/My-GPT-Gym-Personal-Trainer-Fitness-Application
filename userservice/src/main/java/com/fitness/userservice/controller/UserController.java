@@ -8,12 +8,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RestController
 @RequestMapping("/api/users")
 @AllArgsConstructor
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     @GetMapping("/{userId}")
     public ResponseEntity<UserResponse> getUserProfile(@PathVariable String userId){
@@ -22,7 +24,8 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@Valid @RequestBody RegesterRequest request){
-        return ResponseEntity.ok(userService.register(request));
+        UserResponse response = userService.register(request);
+        return ResponseEntity.created(URI.create("/api/users/" + response.id())).body(response);
     }
 
 }

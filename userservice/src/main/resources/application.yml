@@ -2,10 +2,21 @@ spring:
   application:
     name: userservice
   datasource:
-    url: jdbc:postgresql://localhost:5432/fitness_user_db
-    username: postgres
-    password: ForExample123 # bhaiya apna username as password use mt kiya kro
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/fitness_user_db}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD}
+    hikari:
+      maximum-pool-size: ${DATABASE_POOL_SIZE:10}
+      minimum-idle: ${DATABASE_MIN_IDLE:2}
+      connection-timeout: ${DATABASE_CONNECTION_TIMEOUT_MS:30000}
   jpa:
     hibernate:
-      ddl-auto: update
+      # Use `validate` in production after applying schema migrations.
+      ddl-auto: ${JPA_DDL_AUTO:update}
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
